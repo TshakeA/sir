@@ -496,6 +496,18 @@ local function unterminated (str, what, where)
   return nil, strlen (str) + 1, "unterminated " .. what .. " at " .. loc (str, where)
 end
 
+local function scanwhite (str, pos)
+  while true do
+    pos = strfind (str, "%S", pos)
+    if not pos then return nil end
+    if strsub (str, pos, pos + 2) == "\239\187\191" then
+      -- UTF-8 Byte Order Mark
+      pos = pos + 3
+    else
+      return pos
+    end
+  end
+end
 
 local escapechars = {
   ["\""] = "\"", ["\\"] = "\\", ["/"] = "/", ["b"] = "\b", ["f"] = "\f",
